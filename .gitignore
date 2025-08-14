@@ -1,3 +1,9 @@
+# Remove the data files and output files but keep the folder structure
+data/*
+output/*
+!data/.gitkeep
+!output/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

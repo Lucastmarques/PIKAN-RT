@@ -52,15 +52,18 @@ To install PIKAN-RT, follow these steps:
    
 This will set up the `exai` environment with all the dependencies required to run the project.
 
-## ☕ Usando <nome_do_projeto>
+## ☕ Reproducing Experiments with PIKAN-RT
 
-Para usar <nome_do_projeto>, siga estas etapas:
+To use PIKAN-RT, you need to choose which experiment you would like to reproduce:  
+- Impact of Smoothing Factor  
+- Impact of Grid Size  
+- Evaluation of the Final Model  
 
-```
-<exemplo_de_uso>
-```
+Once the experiment is selected, you can run the entire Jupyter notebook using VSCode (with the proper extension), Jupyter Notebook, or Jupyter Lab. Please ensure that you have the necessary environment set up to execute Jupyter notebooks.
 
-Adicione comandos de execução e exemplos que você acha que os usuários acharão úteis. Forneça uma referência de opções para pontos de bônus!
+Remember that you may need to adjust the paths in the notebook to match your local directory structure.
+
+Additionally, the Marmousi velocity model is available for download at [The Marmousi Experience](https://www.geoazur.fr/WIND/bin/view/Main/Data/Marmousi).
 
 
 ## 📝 License

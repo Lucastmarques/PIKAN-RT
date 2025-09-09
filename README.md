@@ -1,9 +1,9 @@
 # PIKAN-RT: A Physics-Informed Kolmogorov-Arnold Network for Seismic Ray Tracing
 
-![GitHub repo size](https://img.shields.io/github/repo-size/Lucastmarques/PIKANRT?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/Lucastmarques/PIKANRT?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/Lucastmarques/PIKANRT?style=for-the-badge)
-![Github Repo Stars](https://img.shields.io/github/stars/Lucastmarques/PIKANRT?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/Lucastmarques/PIKAN-RT?style=for-the-badge)
+![GitHub language count](https://img.shields.io/github/languages/count/Lucastmarques/PIKAN-RT?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/Lucastmarques/PIKAN-RT?style=for-the-badge)
+![Github Repo Stars](https://img.shields.io/github/stars/Lucastmarques/PIKAN-RT?style=for-the-badge)
 
 <img src="architecture.png" alt="Overview of the proposed methodology">
 

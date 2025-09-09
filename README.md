@@ -1,4 +1,4 @@
-# PIKAN-RT: A Physics-Informed Kolmogorov-Arnold Network for Seismic Ray Tracing
+# PIKAN-RT: A Physics-Informed Kolmogorov-Arnold Network for Seismic Ray Tracing under Multiple Initial Conditions
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/Lucastmarques/PIKAN-RT?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/Lucastmarques/PIKAN-RT?style=for-the-badge)

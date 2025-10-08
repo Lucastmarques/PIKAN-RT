@@ -47,9 +47,32 @@ To set up the environment and install the necessary dependencies, follow these s
     ```
 3.  Activate the newly created environment:
     ```bash
-    conda activate pikan
+    conda activate pikanrt
     ```
-This will set up the `pikan` environment with all the dependencies required to run the project.
+This will set up the `pikanrt` environment with all the dependencies required to run the project.
+
+We highly recommend creating the conda environment using the provided `conda.yaml` file to ensure compatibility. However, if you prefer to manage your environment manually, you can install the required packages using conda and pip.
+
+**Python Version:**
+*   `python=3.10.15`
+
+**Conda Packages:**
+*   `pip=24.2`
+*   `pandas=2.2.3`
+*   `pyyaml=6.0.1`
+*   `matplotlib=3.9.2`
+*   `pytorch=2.4.1`
+*   `torchvision=0.19.1`
+*   `cudatoolkit=11.8.0`
+*   `scikit-learn=1.5.2`
+*   `notebook=7.2.2`
+*   `enlighten=1.12.4`
+*   `plotly=5.24.1`
+*   `seaborn=0.13.2`
+
+**Pip Packages:**
+*   `efficient-kan` (from `git+https://github.com/Blealtan/efficient-kan.git`)
+*   `pykan==0.2.8`
 
 ## Usage and Reproducing Experiments
 

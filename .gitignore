@@ -2,6 +2,7 @@
 data/*
 output/*
 !data/.gitkeep
+!data/marmousi_vp.bin
 !output/.gitkeep
 
 # Byte-compiled / optimized / DLL files

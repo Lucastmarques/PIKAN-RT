@@ -8,10 +8,34 @@ import rt_python.adjointlib as adj
 
 
 class DataGenerator:
+    """Generates ray tracing data for a synthetic velocity model.
+
+    This class provides methods to generate and visualize ray tracing data based
+    on a synthetic velocity model defined by depth and horizontal gradients.
+
+    Attributes:
+        x_range (Tuple[float, float]): The range of x-coordinates for the model.
+        z_range (Tuple[float, float]): The range of z-coordinates for the model.
+        theta_range (Tuple[float, float]): The range of initial angles for the rays.
+        Vbsplines (Optional[np.ndarray]): The interpolated velocity model using B-splines.
+        x (Optional[np.ndarray]): The x-coordinates of the velocity model grid.
+        z (Optional[np.ndarray]): The z-coordinates of the velocity model grid.
+    """
+
     def __init__(self,
                  theta_range: Tuple[float, float] = (45, 75),
                  x_range: Tuple[float, float] = (0, 3.6),
                  z_range: Tuple[float, float] = (0, 1.8)):
+        """Initializes the DataGenerator with the given ranges.
+
+        Args:
+            theta_range (Tuple[float, float], optional): Range of initial angles in degrees.
+                Defaults to (45, 75).
+            x_range (Tuple[float, float], optional): Range of x-coordinates in km.
+                Defaults to (0, 3.6).
+            z_range (Tuple[float, float], optional): Range of z-coordinates in km.
+                Defaults to (0, 1.8).
+        """
         self.x_range = x_range
         self.z_range = z_range
         self.theta_range = theta_range
@@ -28,6 +52,20 @@ class DataGenerator:
             dt: float = 1e-3,
             t_max: float = 0.4
             ) -> pd.DataFrame:
+        """Generates a single ray tracing for the given initial conditions.
+
+        Args:
+            x0_p (float): Initial x-coordinate of the ray.
+            z0_p (float): Initial z-coordinate of the ray.
+            theta0 (float): Initial angle of the ray in degrees.
+            dg_over (float, optional): Grid spacing for the oversampled grid. Defaults to 1e-2.
+            factor (int, optional): Downsampling factor for the velocity model. Defaults to 20.
+            dt (float, optional): Time step for the ray tracer. Defaults to 1e-3.
+            t_max (float, optional): Maximum simulation time. Defaults to 0.4.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the ray tracing data.
+        """
 
         assert t_max > dt, ":t_max: must be greater than :dt:."
 
@@ -77,6 +115,24 @@ class DataGenerator:
                      dt: float = 1e-3, t_max: float = 0.4, dx_dy: float = 1e-2, dtheta: int = 5,
                      constant_speed=False
                      ) -> pd.DataFrame:
+        """Generates multiple ray tracings over a range of initial conditions.
+
+        Args:
+            x0_range (Tuple[float, float]): Range of initial x-coordinates.
+            z0_range (Tuple[float, float]): Range of initial z-coordinates.
+            theta_range (Tuple[float, float]): Range of initial angles in degrees.
+            dg_over (float, optional): Grid spacing for the oversampled grid. Defaults to 1e-2.
+            factor (int, optional): Downsampling factor for the velocity model. Defaults to 20.
+            dt (float, optional): Time step for the ray tracer. Defaults to 1e-3.
+            t_max (float, optional): Maximum simulation time. Defaults to 0.4.
+            dx_dy (float, optional): Step size for initial x and z coordinates. Defaults to 1e-2.
+            dtheta (int, optional): Step size for initial angles. Defaults to 5.
+            constant_speed (bool, optional): If True, use a constant velocity model.
+                Defaults to False.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the combined ray tracing data.
+        """
 
         assert t_max > dt, ":t_max: must be greater than :dt:."
 
@@ -148,28 +204,24 @@ class DataGenerator:
              figsize: Tuple[int, int] = (18, 6),
              ax: Optional[plt.Axes] = None
              ) -> plt.Figure:
-        """
-        Plots the velocity model and ray tracing paths.
+        """Plots the velocity model and ray tracing paths.
 
-        Parameters
-        ----------
-        data : pd.DataFrame
-            DataFrame containing the ray tracing data with columns 'x', 'z', 'x0', and 'z0'.
-        conditions : Optional[Tuple[float, float, int]], optional
-            A tuple specifying conditions for plotting specific paths. The tuple values represent:
-            - The x-coordinate of the initial point (float).
-            - The z-coordinate of the initial point (float).
-            - The initial angle in degrees (int).
-            If None, all paths are plotted. Defaults to None.
-        figsize : Tuple[int, int], optional
-            Size of the figure. Defaults to (18, 6).
-        ax : Optional[plt.Axes], optional
-            Matplotlib Axes object to plot on. If None, a new figure and axes are created. Defaults to None.
+        Args:
+            data (pd.DataFrame): DataFrame containing the ray tracing data with
+                columns 'x', 'z', 'x0', and 'z0'.
+            conditions (Optional[Tuple[float, float, int]], optional): A tuple
+                specifying conditions for plotting specific paths. The tuple values
+                represent:
+                - The x-coordinate of the initial point (float).
+                - The z-coordinate of the initial point (float).
+                - The initial angle in degrees (int).
+                If None, all paths are plotted. Defaults to None.
+            figsize (Tuple[int, int], optional): Size of the figure. Defaults to (18, 6).
+            ax (Optional[plt.Axes], optional): Matplotlib Axes object to plot on.
+                If None, a new figure and axes are created. Defaults to None.
 
-        Returns
-        -------
-        plt.Figure
-            The matplotlib figure object containing the plot.
+        Returns:
+            plt.Figure: The matplotlib figure object containing the plot.
         """
         if ax is None:
             fig, ax = plt.subplots(figsize=figsize)
@@ -210,9 +262,17 @@ class DataGenerator:
 
 
 class DataGeneratorParametric(DataGenerator):
+    """Generates parametric ray tracing data.
+
+    This class extends DataGenerator to handle parametric ray tracing, where
+    derivatives of the ray path with respect to initial conditions are also
+    computed.
+    """
+
     def run(self, x0_p: float, z0_p: float, theta0: float,
             dg_over: float = 1e-2, factor: int = 20, dt: float = 1e-3,
             t_max: float = 0.4, dx_dy: float = 1e-2, dtheta: int = 5) -> pd.DataFrame:
+        """This method is not implemented for the parametric version."""
 
         raise NotImplementedError(
             "This method is not implemented for the parametric version.")
@@ -221,7 +281,26 @@ class DataGeneratorParametric(DataGenerator):
                      theta_range: Tuple[float, float], dg_over: float = 1e-2, factor: int = 20,
                      dt: float = 1e-3, t_max: float = 0.4, dx_dy: float = 1e-2, dtheta: int = 5
                      ) -> pd.DataFrame:
+        """Generates multiple parametric ray tracings over a range of initial conditions.
 
+        This method computes not only the ray trajectories but also their derivatives,
+        which are stored in the output DataFrame.
+
+        Args:
+            x0_range (Tuple[float, float]): Range of initial x-coordinates.
+            z0_range (Tuple[float, float]): Range of initial z-coordinates.
+            theta_range (Tuple[float, float]): Range of initial angles in degrees.
+            dg_over (float, optional): Grid spacing for the oversampled grid. Defaults to 1e-2.
+            factor (int, optional): Downsampling factor for the velocity model. Defaults to 20.
+            dt (float, optional): Time step for the ray tracer. Defaults to 1e-3.
+            t_max (float, optional): Maximum simulation time. Defaults to 0.4.
+            dx_dy (float, optional): Step size for initial x and z coordinates. Defaults to 1e-2.
+            dtheta (int, optional): Step size for initial angles. Defaults to 5.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the combined parametric ray tracing data,
+                including derivatives.
+        """
         assert t_max > dt, ":t_max: must be greater than :dt:."
 
         x_over = np.arange(self.x_range[0], self.x_range[1] + dg_over, dg_over)
@@ -488,7 +567,7 @@ class DataGeneratorMarmousi(DataGenerator):
         Args:
             x0_range (Tuple[float, float]): Range of initial x-coordinates.
             z0_range (Tuple[float, float]): Range of initial z-coordinates.
-            theta_range (Tuple[float, float]): Range of initial angles for the rays (in degrees).
+            theta_range (Tuple[float, float]): Range of initial angles in degrees.
             vp (np.ndarray): 2D array representing the velocity model.
             dg_over (float): Grid resolution (default is 1e-2).
             factor (int): Factor to reduce the resolution of the velocity model (default is 20).

@@ -5,19 +5,23 @@ import numpy as np
 
 def ray_tracer(dt: float, tmax: float, r0: np.array, xLim: Tuple[float, float],
                zLim: Tuple[float, float], coeffs_v: np.array, dg: float) -> tuple:
-    """Generate Ray Tracing using Runge-Kutta 2nd order method
+    """Generate Ray Tracing using Runge-Kutta 2nd order method.
 
     Args:
         dt (float): Sampling period.
         tmax (float): Maximum ray tracing time.
-        r0 (np.array): _description_
+        r0 (np.array): Initial conditions for the ray [x0, z0, px0, pz0].
         xLim (Tuple[float, float]): Min and Max values for x.
         zLim (Tuple[float, float]): Min and Max values for z.
         coeffs_v (np.array): Velocity model coefficients.
         dg (float): Degree of grid.
 
     Returns:
-        tuple: _description_
+        A tuple containing:
+            - tray (np.array): Array of time steps.
+            - rt (np.array): Ray trajectory at each time step.
+            - dray (np.array): Derivatives of the ray trajectory.
+            - velocity_vector (np.array): Velocity vector at each time step.
     """
     num_points = np.ceil(tmax / dt) + 1
     tray = np.linspace(0, tmax, int(num_points))
@@ -93,6 +97,26 @@ def ray_tracer(dt: float, tmax: float, r0: np.array, xLim: Tuple[float, float],
 
 
 def ray_tracer_rk2_t(dt, tmax, r0, xLim, zLim, coeffs_v, dg):
+    """Generate Ray Tracing using Runge-Kutta 2nd order method.
+
+    This function is similar to ray_tracer but returns derivatives only at the
+    final time.
+
+    Args:
+        dt (float): Sampling period.
+        tmax (float): Maximum ray tracing time.
+        r0 (np.array): Initial conditions for the ray [x0, z0, px0, pz0].
+        xLim (Tuple[float, float]): Min and Max values for x.
+        zLim (Tuple[float, float]): Min and Max values for z.
+        coeffs_v (np.array): Velocity model coefficients.
+        dg (float): Degree of grid.
+
+    Returns:
+        A tuple containing:
+            - tray (np.array): Array of time steps.
+            - rt (np.array): Ray trajectory at each time step.
+            - dray (np.array): Derivatives at the final time.
+    """
     num_points = np.ceil(tmax / dt) + 1
     tray = np.linspace(0, tmax, int(num_points))
 
@@ -157,6 +181,24 @@ def ray_tracer_rk2_t(dt, tmax, r0, xLim, zLim, coeffs_v, dg):
 
 
 def adjoint_state_solver_rk2_t(dt, rf, lambdaf, tf, xLim, zLim, coeffs_v, dg):
+    """Solve the adjoint state equations using Runge-Kutta 2nd order method.
+
+    Args:
+        dt (float): Sampling period.
+        rf (np.array): Final conditions for the ray [xf, zf, pxf, pzf].
+        lambdaf (np.array): Final conditions for the adjoint variables.
+        tf (float): Final time.
+        xLim (Tuple[float, float]): Min and Max values for x.
+        zLim (Tuple[float, float]): Min and Max values for z.
+        coeffs_v (np.array): Velocity model coefficients.
+        dg (float): Degree of grid.
+
+    Returns:
+        A tuple containing:
+            - rt (np.array): Adjoint state trajectory.
+            - tray (np.array): Array of time steps (reversed).
+            - v0 (float): Velocity at the initial point.
+    """
     rf = np.array(rf)
     lambdaf = np.array(lambdaf)
 
@@ -236,6 +278,14 @@ def adjoint_state_solver_rk2_t(dt, rf, lambdaf, tf, xLim, zLim, coeffs_v, dg):
 
 
 def mirrorW2d(s):
+    """Mirrors the borders of a 2D array to handle boundary conditions.
+
+    Args:
+        s (np.array): The input 2D array.
+
+    Returns:
+        np.array: The mirrored 2D array.
+    """
     N, M = s.shape
     s_mirror = np.zeros((N + 3, M + 3))
     s_mirror[1:-2, 1:-2] = s
@@ -258,6 +308,14 @@ def mirrorW2d(s):
 
 
 def direct_filter_1d(s):
+    """Apply a 1D direct filter for B-spline coefficient calculation.
+
+    Args:
+        s (np.array): The input 1D array.
+
+    Returns:
+        np.array: The filtered 1D array.
+    """
     N = len(s)
     z1 = -2 + np.sqrt(3)
     cplus = np.zeros(N)
@@ -276,6 +334,14 @@ def direct_filter_1d(s):
 
 
 def direct_filter_2d(img):
+    """Apply a 2D direct filter by applying the 1D filter along each axis.
+
+    Args:
+        img (np.array): The input 2D array (image).
+
+    Returns:
+        np.array: The filtered 2D array.
+    """
     N, M = img.shape
     coeffs = np.zeros((N, M))
 
@@ -295,10 +361,26 @@ def direct_filter_2d(img):
 
 
 def coeffs_bsplines_2d(s):
+    """Calculate the B-spline coefficients for a 2D array.
+
+    Args:
+        s (np.array): The input 2D array.
+
+    Returns:
+        np.array: The B-spline coefficients.
+    """
     return direct_filter_2d(s)
 
 
 def bspline(x):
+    """Calculate the value of the cubic B-spline function.
+
+    Args:
+        x (float): The input value.
+
+    Returns:
+        float: The B-spline value.
+    """
     abs_x = abs(x)
     if (abs_x >= 0) and (abs_x < 1):
         betta = 2 / 3 - abs_x ** 2 + (abs_x ** 3) / 2
@@ -310,6 +392,14 @@ def bspline(x):
 
 
 def d1bspline(x):
+    """Calculate the value of the first derivative of the cubic B-spline function.
+
+    Args:
+        x (float): The input value.
+
+    Returns:
+        float: The first derivative value.
+    """
     abs_x = abs(x)
     if abs_x >= 0 and abs_x < 1:
         betta = 0.5 * x * (3 * abs_x - 4)
@@ -321,6 +411,14 @@ def d1bspline(x):
 
 
 def d2bspline(x):
+    """Calculate the value of the second derivative of the cubic B-spline function.
+
+    Args:
+        x (float): The input value.
+
+    Returns:
+        float: The second derivative value.
+    """
     abs_x = abs(x)
     if abs_x == 0:
         betta = -2
@@ -334,6 +432,18 @@ def d2bspline(x):
 
 
 def interp2d_bsplines(s, rate1, rate2):
+    """Interpolate a 2D array using B-splines.
+
+    Args:
+        s (np.array): The input 2D array.
+        rate1 (int): The interpolation rate for the first dimension.
+        rate2 (int): The interpolation rate for the second dimension.
+
+    Returns:
+        A tuple containing:
+            - s_interp (np.array): The interpolated 2D array.
+            - coeffs (np.array): The B-spline coefficients.
+    """
     coeffs = coeffs_bsplines_2d(s)
     coeffs_mirror = mirrorW2d(coeffs)
     N = rate1 * s.shape[0] - (rate1 - 1)
@@ -349,6 +459,16 @@ def interp2d_bsplines(s, rate1, rate2):
 
 
 def interp2d_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation at a single point.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated value.
+    """
     k = int(row)
     l = int(col)
 
@@ -378,6 +498,16 @@ def interp2d_bsplines_core(coeffs_mirror, row, col):
 
 
 def interp2d_dz_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation of the derivative w.r.t. z.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated derivative value.
+    """
     k = int(row)
     l = int(col)
 
@@ -407,6 +537,16 @@ def interp2d_dz_bsplines_core(coeffs_mirror, row, col):
 
 
 def interp2d_dx_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation of the derivative w.r.t. x.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated derivative value.
+    """
     k = int(row)
     l = int(col)
 
@@ -436,6 +576,16 @@ def interp2d_dx_bsplines_core(coeffs_mirror, row, col):
 
 
 def interp2d_dzdz_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation of the second derivative w.r.t. z.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated second derivative value.
+    """
     k = int(row)
     l = int(col)
 
@@ -465,6 +615,16 @@ def interp2d_dzdz_bsplines_core(coeffs_mirror, row, col):
 
 
 def interp2d_dxdx_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation of the second derivative w.r.t. x.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated second derivative value.
+    """
     k = int(row)
     l = int(col)
 
@@ -494,6 +654,16 @@ def interp2d_dxdx_bsplines_core(coeffs_mirror, row, col):
 
 
 def interp2d_dxdz_bsplines_core(coeffs_mirror, row, col):
+    """Core function for 2D B-spline interpolation of the mixed second derivative.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients.
+        row (float): The row coordinate for interpolation.
+        col (float): The column coordinate for interpolation.
+
+    Returns:
+        float: The interpolated mixed derivative value.
+    """
     k = int(row)
     l = int(col)
 
@@ -523,6 +693,23 @@ def interp2d_dxdz_bsplines_core(coeffs_mirror, row, col):
 
 
 def defvel(coeffs_mirror, xtau, ztau, dg):
+    """Calculate velocity and its derivatives at a point using B-spline interpolation.
+
+    Args:
+        coeffs_mirror (np.array): The mirrored B-spline coefficients of the velocity model.
+        xtau (float): The x-coordinate.
+        ztau (float): The z-coordinate.
+        dg (float): The grid spacing.
+
+    Returns:
+        A tuple containing:
+            - v (float): Velocity.
+            - vx (float): Derivative of velocity w.r.t. x.
+            - vz (float): Derivative of velocity w.r.t. z.
+            - vxx (float): Second derivative of velocity w.r.t. x.
+            - vzz (float): Second derivative of velocity w.r.t. z.
+            - vxz (float): Mixed second derivative of velocity w.r.t. x and z.
+    """
     v = interp2d_bsplines_core(coeffs_mirror, ztau / dg, xtau / dg)
     vx = (1 / dg) * interp2d_dx_bsplines_core(coeffs_mirror, ztau / dg, xtau / dg)
     vz = (1 / dg) * interp2d_dz_bsplines_core(coeffs_mirror, ztau / dg, xtau / dg)
@@ -536,6 +723,27 @@ def defvel(coeffs_mirror, xtau, ztau, dg):
 
 
 def derivative_bsplines_coeffs(rt, xi, zj, dg, mu3, mu4, x0, z0, theta0, v0, dt, coeffs_v):
+    """Calculate the derivative of the cost function w.r.t. B-spline coefficients.
+
+    Args:
+        rt (np.array): Adjoint state trajectory.
+        xi (np.array): X-coordinates of the grid.
+        zj (np.array): Z-coordinates of the grid.
+        dg (float): Grid spacing.
+        mu3 (float): Weighting factor for the p_x component of the cost function.
+        mu4 (float): Weighting factor for the p_z component of the cost function.
+        x0 (float): Initial x-coordinate of the ray.
+        z0 (float): Initial z-coordinate of the ray.
+        theta0 (float): Initial angle of the ray.
+        v0 (float): Initial velocity.
+        dt (float): Time step.
+        coeffs_v (np.array): Velocity model B-spline coefficients.
+
+    Returns:
+        A tuple containing:
+            - dJdw (np.array): Derivative of the cost function w.r.t. the coefficients.
+            - out_test (np.array): Contribution from the initial condition term.
+    """
     x_t = rt[::-1, 0]
     z_t = rt[::-1, 1]
     px_t = rt[::-1, 2]
